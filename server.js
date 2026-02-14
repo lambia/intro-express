@@ -6,6 +6,8 @@ const express = require('express') //CommonJS CJS
 const app = express()
 const port = 3000
 
+app.use(express.static('public'));
+
 app.get('/', (req, res) => {
 	console.log("Chiamata ricevuta!");
 	res.send('<html><body><h1>Hello server World!</h1></body></html>')
