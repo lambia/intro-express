@@ -1,6 +1,7 @@
 console.log("Benvenuto nel mondo server-side");
 
-const express = require('express')
+const express = require('express') //CommonJS CJS
+//import qualcosa from "quello" //ModuleJS MJS
 
 const app = express()
 const port = 3000

@@ -1,6 +1,7 @@
 {
   "name": "intro-express",
   "version": "1.0.0",
+  "type": "commonjs",
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js"
