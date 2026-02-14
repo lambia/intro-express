@@ -6,5 +6,8 @@
     "dev": "node --watch server.js"
   },
   "author": "Luca Lambiase",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
