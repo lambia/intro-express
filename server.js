@@ -7,7 +7,25 @@ const app = express()
 const port = 3000
 
 app.get('/', (req, res) => {
-	res.send('Hello World!')
+	console.log("Chiamata ricevuta!");
+	res.send('<html><body><h1>Hello server World!</h1></body></html>')
+})
+
+app.get('/json', (req, res) => {
+	const persona = {
+		nome: "Luca",
+		cognome: "Lambiase"
+	};
+
+	// res.send(persona); //invio JSON e lascio che express "intuisca" il type
+	// res.type("json").send(persona) //esplicito il type a mano
+	// res.type("json").send(persona);
+	res.json(persona); //esplicito il type in forma concisa
+
+})
+
+app.get("/altro", (req, res) => {
+	res.redirect("https://www.google.it");
 })
 
 app.listen(port, () => {
