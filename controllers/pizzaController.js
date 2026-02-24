@@ -6,7 +6,7 @@ function index(req, res) {
 
 	let results = menu;
 
-	console.log("Ricevuta chiamata con query: ", req.query);
+	// console.log("Ricevuta chiamata con query: ", req.query);
 
 	//se c'è un filtro => filtra
 	if (req.query.ingredient) {
@@ -61,10 +61,39 @@ function destroy(req, res) {
 	return res.sendStatus(204);
 }
 
-const oggettone = {
+//Store (Crud)
+function store(req, res) {
+	// console.log(`You request to CREATE a new pizza`, req.body);
+
+	const newPizza = {
+		id: menu[menu.length - 1].id + 1,
+		name: req.body.name,
+		image: req.body.image,
+		ingredients: req.body.ingredients
+	};
+
+	menu.push(newPizza);
+
+	return res.status(201).json(newPizza)
+}
+
+//Update (crUd)
+function update(req, res) {
+	console.log(`You requested to UPDATE (complete) the pizza with id: ${req.params.id}`, req.body);
+	res.send(`You requested to UPDATE (complete) the pizza with id: ${req.params.id}`);
+}
+
+//Modify (crUd)
+function modify(req, res) {
+	console.log(`You requested to MODIFY (partial) the pizza with id: ${req.params.id}`, req.body);
+	res.send(`You requested to MODIFY (partial) the pizza with id: ${req.params.id}`);
+}
+
+module.exports = {
 	index,
 	show,
-	destroy
-};
-
-module.exports = oggettone
+	destroy,
+	store,
+	update,
+	modify
+}

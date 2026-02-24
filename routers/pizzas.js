@@ -13,19 +13,12 @@ router.get('/:id', pizzaController.show)
 router.delete('/:id', pizzaController.destroy)
 
 //Store (Crud)
-router.post('/', (req, res) => {
-	res.send(`You request to CREATE a new pizza`);
-})
+router.post('/', pizzaController.store)
 
 //Update (crUd)
-router.put('/:id', (req, res) => {
-	res.send(`You requested to UPDATE (complete) the pizza with id: ${req.params.id}`);
-})
+router.put('/:id', pizzaController.update)
 
 //Modify (crUd)
-router.patch('/:id', (req, res) => {
-	res.send(`You requested to MODIFY (partial) the pizza with id: ${req.params.id}`);
-})
-
+router.patch('/:id', pizzaController.modify)
 
 module.exports = router;
