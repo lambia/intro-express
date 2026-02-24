@@ -6,10 +6,20 @@ function index(req, res) {
 
 	let results = menu;
 
+	console.log("Ricevuta chiamata con query: ", req.query);
+
 	//se c'è un filtro => filtra
 	if (req.query.ingredient) {
 		results = menu.filter(pizza => pizza.ingredients.includes(req.query.ingredient));
 	}
+
+	// if (req.query.ingredient) {
+	// 	results = menu.filter(pizza => {
+	// 		console.log(pizza);
+	// 		console.log("Includo?", pizza.ingredients.includes(req.query.ingredient));
+	// 		return pizza.ingredients.includes(req.query.ingredient);
+	// 	});
+	// }
 
 	res.json(results);
 }
