@@ -79,8 +79,32 @@ function store(req, res) {
 
 //Update (crUd)
 function update(req, res) {
-	console.log(`You requested to UPDATE (complete) the pizza with id: ${req.params.id}`, req.body);
-	res.send(`You requested to UPDATE (complete) the pizza with id: ${req.params.id}`);
+	// console.log(`You requested to UPDATE (complete) the pizza with id: ${req.params.id}`, req.body);
+
+	const id = Number(req.params.id);
+
+	if (isNaN(id)) {
+		return res.status(400).json({ error: "User error", message: "L'id non è valido" });
+	}
+
+	const result = menu.find(pizza => pizza.id == id);
+
+	if (!result) {
+		return res.status(404).json({ error: "Not Found", message: "Pizza non trovata" });
+	}
+
+	result.name = req.body.name;
+	result.image = req.body.image;
+	result.ingredients = req.body.ingredients;
+
+	// result = {
+	// 	id: result.id,
+	// 	name: req.body.name,
+	// 	image: req.body.image,
+	// 	ingredients: req.body.ingredients
+	// };
+
+	return res.json(result);
 }
 
 //Modify (crUd)
