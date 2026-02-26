@@ -1,6 +1,7 @@
 const menu = require("../data/pizzas");
 
 /* Nota: la validazione di ID e dell'oggetto pizza normalmente verrebbe spostata in un middleware! */
+/* Nota2: i metodi parseId, findPizza ecc.. non sono utilizzati dappertutto (es. destroy, show), il refactoring del controller non è finito e non è testato*/
 
 //Funzione helper, non esportata, usata ogni volta che devo controllare un id
 function _parseId(req, res) {
