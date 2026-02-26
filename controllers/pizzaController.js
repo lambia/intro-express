@@ -6,6 +6,8 @@ function index(req, res) {
 
 	let results = menu;
 
+	niente.prova();
+
 	// console.log("Ricevuta chiamata con query: ", req.query);
 
 	//se c'è un filtro => filtra

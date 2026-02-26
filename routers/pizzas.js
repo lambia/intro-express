@@ -1,7 +1,10 @@
 const express = require('express')
 const router = express.Router();
+const checkTime = require('../middlewares/checkTime');
 
 const pizzaController = require("../controllers/pizzaController");
+
+// router.use(checkTime);
 
 //Index (cRud)
 router.get('/', pizzaController.index)
@@ -10,7 +13,7 @@ router.get('/', pizzaController.index)
 router.get('/:id', pizzaController.show)
 
 //Destroy (cruD)
-router.delete('/:id', pizzaController.destroy)
+router.delete('/:id', /*checkTime,*/ pizzaController.destroy)
 
 //Store (Crud)
 router.post('/', pizzaController.store)
