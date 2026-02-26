@@ -12,7 +12,7 @@ app.use(express.json())
 //Welcome screen
 app.get('/', (req, res) => {
 	console.log("Chiamata ricevuta!");
-	res.send('<html><style>body{background:#222;color:#FFF;font-family:sans-serif;padding:1rem;}</style><body><h1>Benvenuto nel server delle pizze</h1><h2>Questa è una web-api, non ci sono altre pagine web.</h2></body></html>')
+	res.send('<html><style>body{background:#222;color:#FFF;font-family:sans-serif;padding:1rem;}</style><body><h1>Benvenuto nel server delle pizze</h1><h2>Questa è una web-api, non ci sono altre pagine web.</h2><p>Ricordati di effettuare le chiamate da Postman e non dal browser!</p></body></html>')
 })
 
 app.use("/pizzas", pizzasRouter)
