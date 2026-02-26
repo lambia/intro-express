@@ -95,7 +95,7 @@ function update(req, res) {
 
 	result.name = req.body.name;
 	result.image = req.body.image;
-	result.ingredients = req.body.name;
+	result.ingredients = req.body.ingredients;
 
 	// result = {
 	// 	id: result.id,
@@ -128,10 +128,10 @@ function modify(req, res) {
 		result.name = req.body.name;
 	}
 	if (req.body.image !== undefined) {
-		result.name = req.body.name;
+		result.image = req.body.image;
 	}
 	if (req.body.ingredients !== undefined) {
-		result.name = req.body.name;
+		result.ingredients = req.body.ingredients;
 	}
 
 	// const allowedProperties = ["name", "image", "ingredients"];
