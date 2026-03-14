@@ -3,8 +3,6 @@ const mysql = require("mysql2");
 const dotenv = require("dotenv");
 dotenv.config();
 
-console.log("Variabili env per DB: ",);
-
 const dbConfiguration = {
 	host: process.env.DB_HOST,
 	port: process.env.DB_PORT,
