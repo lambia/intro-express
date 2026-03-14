@@ -4,20 +4,32 @@ function index(req, res) {
 
 	// console.log(req.query);
 
-	const sqlQuery = "SELECT * FROM pizzas";
+	let sqlQuery = "SELECT * FROM pizzas";
+	const parametriQuery = [];
 
-	dbConnection.query(sqlQuery, (error, rows) => {
+	if (req.query.ingredients) {
+
+		sqlQuery = `
+			SELECT pizzas.*
+			FROM pizzeria_db.ingredient_pizza
+			JOIN pizzas
+			ON ingredient_pizza.pizza_id = pizzas.id
+
+			WHERE ingredient_id = ?
+		`;
+
+		parametriQuery.push(req.query.ingredients);
+	}
+
+	// dbConnection.query(sqlQuery, parametriQuery?, callback);
+
+	dbConnection.query(sqlQuery, parametriQuery, (error, rows) => {
 		if (error) {
+			console.error(error);
 			return res.status(500).json({ error: "DB Error", message: "Errore di nel recuperare i dati dal DB" });
 		}
 
-		let results = rows;
-
-		// if (req.query.ingredient) {
-		// 	results = rows.filter(pizza => pizza.ingredients.includes(req.query.ingredient));
-		// }
-
-		res.json(results);
+		res.json(rows);
 	});
 }
 
@@ -28,13 +40,50 @@ function show(req, res) {
 		return res.status(400).json({ error: "User error", message: "L'id non è valido" });
 	}
 
-	const result = menu.find(pizza => pizza.id == id);
+	const entityQuery = "SELECT * FROM pizzas WHERE id = ?";
+	const relationsQuery = `
+		SELECT ingredients.name
+		FROM ingredient_pizza
+		JOIN ingredients
+		ON ingredients.id = ingredient_pizza.ingredient_id
+		WHERE pizza_id = ?
+	`;
 
-	if (!result) {
-		return res.status(404).json({ error: "Not Found", message: "Pizza non trovata" });
-	}
+	const parametriQuery = [id];
 
-	return res.json(result);
+	dbConnection.query(entityQuery, parametriQuery, (error, results) => {
+
+		if (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Query error", message: "Impossibile processare la richiesta" });
+		}
+
+		if (results.length === 0) {
+			return res.status(404).json({ error: "Not found", message: "Impossibile trovare la risorsa richiesta" });
+		}
+
+		const pizza = results[0];
+		console.log("pizza", pizza);
+
+		dbConnection.query(relationsQuery, parametriQuery, (error, results) => {
+
+			if (error) {
+				return res.status(500).json({ error: "Query error", message: "Impossibile processare la richiesta" });
+			}
+
+			//restituisce array di oggetti ingrediente
+			//funziona meglio se abbiamo fatto select ingredients.*
+			// pizza.ingredients = results;
+
+			//pluck: crea array di stringhe a partire da una proprietà di un oggetto in un array
+			//funziona meglio se abbiamo fatto select ingredients.name
+			pizza.ingredients = results.map(ingrediente => ingrediente.name);
+
+			res.json(pizza);
+
+		});
+
+	});
 }
 
 function destroy(req, res) {
@@ -50,9 +99,14 @@ function destroy(req, res) {
 	const sqlQuery = "DELETE FROM pizzas WHERE id = ?";
 	const parametriQuery = [id];
 
-	dbConnection.query(sqlQuery, parametriQuery, error => {
+	dbConnection.query(sqlQuery, parametriQuery, (error, results) => {
 		if (error) {
+			console.error(error);
 			res.status(500).json({ error: "DB Error", message: "Impossile eliminare la pizza" });
+		}
+
+		if (results.affectedRows === 0) {
+			res.status(404).json({ error: "Not Found", message: "Pizza non trovata" });
 		}
 
 		return res.sendStatus(204);
@@ -63,16 +117,28 @@ function destroy(req, res) {
 function store(req, res) {
 	// console.log(`You request to CREATE a new pizza`, req.body);
 
-	const newPizza = {
-		id: menu[menu.length - 1].id + 1,
-		name: req.body.name,
-		image: req.body.image,
-		ingredients: req.body.ingredients
-	};
+	const name = req.body.name;
+	const image = req.body.image;
 
-	menu.push(newPizza);
+	if (!name) {
+		return res.status(400).json({ error: "Cannot insert pizza", message: "Per la pizza è necessario un nome" });
+	}
 
-	return res.status(201).json(newPizza)
+	const sqlQuery = "INSERT INTO pizzas (name, image) VALUES (?, ?)";
+	const parametriQuery = [name, image];
+
+	dbConnection.query(sqlQuery, parametriQuery, (error, result) => {
+
+		if (error) {
+			console.log(error);
+			return res.status(500).json({ error: "Cannot insert pizza", message: "Impossibile inserire la pizza" });
+		}
+
+		console.log(result);
+
+		return res.status(201).json({ id: result.insertId });
+
+	});
 }
 
 //Update (crUd)
@@ -85,24 +151,26 @@ function update(req, res) {
 		return res.status(400).json({ error: "User error", message: "L'id non è valido" });
 	}
 
-	const result = menu.find(pizza => pizza.id == id);
+	const { name, image } = req.body;
 
-	if (!result) {
-		return res.status(404).json({ error: "Not Found", message: "Pizza non trovata" });
-	}
+	const sqlQuery = "UPDATE pizzas SET name = ?, image = ? WHERE id = ?";
+	const parametriQuery = [name, image, id];
 
-	result.name = req.body.name;
-	result.image = req.body.image;
-	result.ingredients = req.body.ingredients;
+	dbConnection.query(sqlQuery, parametriQuery, (error, result) => {
 
-	// result = {
-	// 	id: result.id,
-	// 	name: req.body.name,
-	// 	image: req.body.image,
-	// 	ingredients: req.body.ingredients
-	// };
+		if (error) {
+			console.error(error);
+			return res.status(500).json({ error: "Cannot update", message: "Impossibile modificare la pizza" });
+		}
 
-	return res.json(result);
+		if (result.affectedRows === 0) {
+			return res.status(404).json({ error: "Not found", message: "Impossibile modificare una pizza non esistente" });
+		}
+
+		return res.json({ message: "pizza updated" });
+
+	});
+
 }
 
 //Modify (crUd)
